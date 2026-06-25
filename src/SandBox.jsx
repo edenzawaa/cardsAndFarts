@@ -36,7 +36,14 @@ function SandBox() {
   let ws = null;
   let isCleanedUp = false;
 
-  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const isLocal = 
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' || 
+    /^192\.168\./.test(window.location.hostname) || 
+    /^10\./.test(window.location.hostname) || 
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(window.location.hostname) || 
+    /\.local$/.test(window.location.hostname);
+
   const API_BASE = isLocal ? '' : 'https://cardsandfarts-api.onrender.com';
   const wsUrl = isLocal
     ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`
@@ -2722,7 +2729,7 @@ function createPlayerAvatar(playerColor) {
   leftFoot.rotation.set(0.1, 0.2, 0); // Pointing slightly outward
   group.add(leftFoot);
 
-  // const rightFoot = new THREE.Mesh(footGeo, footMat);
+  const rightFoot = new THREE.Mesh(footGeo, footMat);
   rightFoot.position.set(0.07, -0.37, 0.05);
   rightFoot.rotation.set(0.1, -0.2, 0);
   group.add(rightFoot);
