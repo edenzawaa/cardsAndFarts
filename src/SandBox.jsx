@@ -15,6 +15,7 @@ function SandBox() {
   const [inLobby, setInLobby] = createSignal(false);
   const [gameStarted, setGameStarted] = createSignal(false);
   const [errorMsg, setErrorMsg] = createSignal("");
+  const [socketStatus, setSocketStatus] = createSignal("DISCONNECTED");
 
   // --- GAMEPLAY PHASE SIGNALS ---
   const [phase, setPhase] = createSignal("WAITING_FOR_CAPTION");
@@ -90,12 +91,14 @@ function SandBox() {
   // --- WEBSOCKET CONNECTION HELPER ---
   const connectWebSocket = (onOpenCallback) => {
     setErrorMsg("");
+    setSocketStatus("CONNECTING");
     
     console.log(`[WebSocket] Connecting to ${wsUrl}...`);
     ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
       console.log('[WebSocket] Connected to server');
+      setSocketStatus("CONNECTED");
       if (onOpenCallback) onOpenCallback();
     };
 
@@ -144,6 +147,7 @@ function SandBox() {
 
     ws.onclose = () => {
       console.log('[WebSocket] Connection closed');
+      setSocketStatus("DISCONNECTED");
       if (inLobby() && !isCleanedUp) {
         setErrorMsg("Disconnected from server. Attempting to reconnect...");
         
@@ -169,6 +173,7 @@ function SandBox() {
 
     ws.onerror = (err) => {
       console.error('[WebSocket] Error:', err);
+      setSocketStatus("DISCONNECTED");
       setErrorMsg("Failed to connect to backend server.");
     };
   };
@@ -2009,7 +2014,6 @@ function SandBox() {
     return wPlayer ? wPlayer.points : 5;
   };
 
-
   return (
     <div 
       style={{ 
@@ -2023,6 +2027,29 @@ function SandBox() {
       onTouchStart={() => handleLocalHover(null)}
       onClick={() => handleLocalHover(null)}
     >
+      {/* Connection Status Banner */}
+      <Show when={socketStatus() === 'CONNECTING' || (inLobby() && socketStatus() === 'DISCONNECTED')}>
+        <div style={{
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: "100vw",
+          background: socketStatus() === 'CONNECTING' ? "#ffca28" : "#ff1744",
+          color: "#000",
+          "text-align": "center",
+          padding: "6px",
+          "font-size": "12px",
+          "font-weight": "700",
+          "z-index": "2000",
+          "border-bottom": "3px solid #000",
+          "font-family": "var(--font-sans)"
+        }}>
+          {socketStatus() === 'CONNECTING' 
+            ? "Connecting to server... (Render wake-up can take up to 60 seconds)" 
+            : "Disconnected from server. Retrying..."}
+        </div>
+      </Show>
+
       {/* Fullscreen Floating Toggle Button */}
       <button 
         class="fullscreen-toggle-btn" 
