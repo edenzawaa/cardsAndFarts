@@ -2165,20 +2165,20 @@ function SandBox() {
 
             {/* Players list with points and status */}
             <div class="hud-players-box">
-              <div class="input-label" style={{ "font-size": "11px", "margin-bottom": "4px" }}>Points:</div>
+              <div class="input-label" style={{ "font-size": "12px", "margin-bottom": "4px" }}>Points:</div>
               <For each={players()}>
                 {(player) => (
                   <div class="hud-player-item">
                     <div class="hud-player-name-container">
                       <div class="player-color-dot" style={{ width: "8px", height: "8px", color: player.color, "background-color": player.color }} />
-                      <span style={{ "font-weight": player.id === playerId() ? "700" : "400", "font-size": "13px" }}>
+                      <span style={{ "font-weight": player.id === playerId() ? "700" : "400", "font-size": "12px" }}>
                         {player.name}
                       </span>
                     </div>
                     <div style={{ "display": "flex", "align-items": "center", "gap": "4px" }}>
                       <span style={{ "font-weight": "800", "font-size": "12px" }}>{player.points} pts</span>
                       <Show when={phase() === 'SUBMITTING_CARDS' && player.id !== players()[activePlayerIdx()]?.id}>
-                        <span style={{ "font-size": "11px" }}>{player.hasSubmitted ? "Ready" : "Waiting"}</span>
+                        <span style={{ "font-size": "12px" }}>{player.hasSubmitted ? "Ready" : "Waiting"}</span>
                       </Show>
                     </div>
                   </div>
