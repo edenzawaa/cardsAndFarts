@@ -2557,8 +2557,12 @@ function SandBox() {
       </Show>
 
       {/* Stationary Hitboxes for Hover and Click Detection */}
-      {/* Anti-collision: Only rendered/interactive when the player actually needs to choose a card! */}
-      <Show when={inLobby() && gameStarted() && phase() === 'SUBMITTING_CARDS' && !hasSubmitted() && !isActiveDrawer()}>
+      {/* Anti-collision: Rendered/interactive during all phases where the player's hand is fanned and visible! */}
+      <Show when={
+        inLobby() && 
+        gameStarted() && 
+        (phase() === 'WAITING_FOR_CAPTION' || phase() === 'CHOOSING_CAPTION' || phase() === 'SUBMITTING_CARDS')
+      }>
         <div class="hand-hitboxes">
           <For each={Array(hand().length)}>
             {(_, index) => {

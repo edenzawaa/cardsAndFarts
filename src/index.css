@@ -600,7 +600,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   width: 520px;
-  height: 220px;
+  height: 260px; /* Increased from 220px to make card hover targets taller and easier to hit */
   display: flex;
   z-index: 600; /* Elevated above the HUD container (z-index 500) to guarantee click priority */
   pointer-events: none;
@@ -746,7 +746,7 @@ body {
   .hand-hitboxes {
     width: 100%;
     max-width: 100vw;
-    height: 170px;
+    height: 200px; /* Increased from 170px to make touch-targeting cards much easier on mobile screens */
   }
 
   .hud-leave-button {
