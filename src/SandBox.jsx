@@ -35,6 +35,12 @@ function SandBox() {
   let ws = null;
   let isCleanedUp = false;
 
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const API_BASE = isLocal ? '' : 'https://cardsandfarts-api.onrender.com';
+  const wsUrl = isLocal
+    ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`
+    : 'wss://cardsandfarts-api.onrender.com/ws';
+
   // Gesture tracking variables
   let touchStartCard = null;
   let alreadyHoveredBeforeTouch = false;
@@ -62,8 +68,6 @@ function SandBox() {
   // --- WEBSOCKET CONNECTION HELPER ---
   const connectWebSocket = (onOpenCallback) => {
     setErrorMsg("");
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
     
     console.log(`[WebSocket] Connecting to ${wsUrl}...`);
     ws = new WebSocket(wsUrl);
@@ -1839,7 +1843,7 @@ function SandBox() {
         const mesh = cardMeshes[i];
         if (mesh && sub.memeId && mesh.userData.memeId !== sub.memeId) {
           mesh.userData.memeId = sub.memeId;
-          const url = `/api/meme?id=${encodeURIComponent(sub.memeId)}`;
+          const url = `${API_BASE}/api/meme?id=${encodeURIComponent(sub.memeId)}`;
           if (loadCardTexture) {
             loadCardTexture(i, url);
           }
@@ -1859,7 +1863,7 @@ function SandBox() {
         const mesh = cardMeshes[i];
         if (mesh && memeId && mesh.userData.memeId !== memeId) {
           mesh.userData.memeId = memeId;
-          const url = `/api/meme?id=${encodeURIComponent(memeId)}`;
+          const url = `${API_BASE}/api/meme?id=${encodeURIComponent(memeId)}`;
           if (loadCardTexture) {
             loadCardTexture(i, url);
           }
