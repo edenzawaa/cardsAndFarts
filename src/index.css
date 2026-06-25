@@ -680,6 +680,7 @@ body {
   }
 
   .hud-title-box {
+    /* margin-top: 0px; */
     align-self: flex-start;
     padding: 4px 10px;
   }

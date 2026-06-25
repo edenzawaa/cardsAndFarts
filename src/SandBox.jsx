@@ -7,7 +7,7 @@ function SandBox() {
   let animationFrameId = null;
 
   // --- MULTIPLAYER LOBBY STATE SIGNALS ---
-  const [playerName, setPlayerName] = createSignal("Silly Fool");
+  const [playerName, setPlayerName] = createSignal("");
   const [inputLobbyId, setInputLobbyId] = createSignal("");
   const [lobbyId, setLobbyId] = createSignal("");
   const [playerId, setPlayerId] = createSignal("");
@@ -174,7 +174,7 @@ function SandBox() {
     connectWebSocket(() => {
       ws.send(JSON.stringify({
         type: 'CREATE_LOBBY',
-        playerName: playerName() || 'Host Fool'
+        playerName: playerName() || 'Host'
       }));
     });
   };
@@ -182,14 +182,14 @@ function SandBox() {
   const handleJoinLobby = () => {
     const code = inputLobbyId().trim().toUpperCase();
     if (!code) {
-      setErrorMsg("You need a room code, silly!");
+      setErrorMsg("You need a room code!");
       return;
     }
     connectWebSocket(() => {
       ws.send(JSON.stringify({
         type: 'JOIN_LOBBY',
         lobbyId: code,
-        playerName: playerName() || 'Guest Fool'
+        playerName: playerName() || 'Guest'
       }));
     });
   };
@@ -1961,7 +1961,7 @@ function SandBox() {
   const getWinnerName = () => {
     const wId = winnerId();
     const wPlayer = players().find(p => p.id === wId);
-    return wPlayer ? wPlayer.name : 'Unknown Fool';
+    return wPlayer ? wPlayer.name : 'Unknown';
   };
 
   const getWinnerPoints = () => {
@@ -2000,10 +2000,10 @@ function SandBox() {
         <div class="lobby-screen">
           <div class="silly-panel">
             <h1 class="lobby-title">cardsAndFarts</h1>
-            <p class="lobby-subtitle">The Simplest &amp; Silliest 3D Card Game!</p>
+            <p class="lobby-subtitle">The Simplest &amp; Silliest Card Game!</p>
 
             <div class="input-group">
-              <label class="input-label">What is your name, fool?</label>
+              <label class="input-label">Enter your name</label>
               <input 
                 type="text" 
                 class="silly-input"
@@ -2047,14 +2047,14 @@ function SandBox() {
       <Show when={inLobby() && !gameStarted()}>
         <div class="lobby-screen">
           <div class="silly-panel" style={{ transform: "rotate(1deg)" }}>
-            <h1 class="lobby-title">The Fool Lobby</h1>
-            <p class="lobby-subtitle">Invite other fools with this secret code:</p>
+            <h1 class="lobby-title">Lobby</h1>
+            <p class="lobby-subtitle">Invite others with this secret code:</p>
 
             <div class="lobby-code-box" id="copy-btn" onClick={copyRoomCode}>
               {lobbyId()}
             </div>
 
-            <label class="input-label" style={{ "text-align": "left" }}>Fools in the room:</label>
+            <label class="input-label" style={{ "text-align": "left" }}>peoples:</label>
             <div class="player-list" style={{ "max-height": "180px" }}>
               <For each={players()}>
                 {(player) => (
@@ -2064,7 +2064,7 @@ function SandBox() {
                       <span class="player-name">{player.name} {player.id === playerId() ? "(You)" : ""}</span>
                     </div>
                     <Show when={player.isHost}>
-                      <span class="player-tag">BOSS FOOL</span>
+                      <span class="player-tag">Host</span>
                     </Show>
                   </div>
                 )}
@@ -2075,11 +2075,11 @@ function SandBox() {
               <Show when={isHost()} fallback={
                 <div style={{ "text-align": "center", "margin": "10px 0" }}>
                   <span class="silly-spinner">...</span>
-                  <div class="input-label">Waiting for the Boss Fool to start...</div>
+                  <div class="input-label">Waiting for the next player to start...</div>
                 </div>
               }>
                 <button class="silly-button silly-button-secondary" style={{ width: "100%" }} onClick={handleStartGame}>
-                  Start the Tomfoolery
+                  Start
                 </button>
               </Show>
               
@@ -2107,7 +2107,7 @@ function SandBox() {
 
             {/* Players list with points and status */}
             <div class="hud-players-box">
-              <div class="input-label" style={{ "font-size": "11px", "margin-bottom": "4px" }}>Fools &amp; Points:</div>
+              <div class="input-label" style={{ "font-size": "11px", "margin-bottom": "4px" }}>Points:</div>
               <For each={players()}>
                 {(player) => (
                   <div class="hud-player-item">
@@ -2119,9 +2119,6 @@ function SandBox() {
                     </div>
                     <div style={{ "display": "flex", "align-items": "center", "gap": "4px" }}>
                       <span style={{ "font-weight": "800", "font-size": "12px" }}>{player.points} pts</span>
-                      <Show when={player.id === players()[activePlayerIdx()]?.id}>
-                        <span style={{ "font-size": "11px", "font-weight": "800" }}>(Active)</span>
-                      </Show>
                       <Show when={phase() === 'SUBMITTING_CARDS' && player.id !== players()[activePlayerIdx()]?.id}>
                         <span style={{ "font-size": "11px" }}>{player.hasSubmitted ? "Ready" : "Waiting"}</span>
                       </Show>
@@ -2174,7 +2171,7 @@ function SandBox() {
                 <div style={{ "text-align": "center", "padding": "10px 0" }}>
                   <span class="silly-spinner" style={{ "font-size": "20px" }}>...</span>
                   <p class="lobby-subtitle" style={{ "font-size": "12px", "color": "#5b21b6", "margin-top": "8px" }}>
-                    {getActiveDrawerName()} is choosing between two silly captions...
+                    {getActiveDrawerName()} is choosing captions...
                   </p>
                 </div>
               }>
@@ -2276,7 +2273,7 @@ function SandBox() {
               <div class="silly-panel" style={{ transform: "rotate(1deg)" }}>
                 <h2 class="lobby-title" style={{ "font-size": "18px" }}>Submitted</h2>
                 <p class="lobby-subtitle" style={{ "margin-bottom": "8px", "color": "#5b21b6", "font-size": "11px" }}>
-                  Meme is in pile! Waiting for other fools...
+                  Meme is in pile! Waiting for others
                 </p>
                 <div class="waiting-spinner" style={{ "border-top-color": "#000", "margin-bottom": "6px", "width": "20px", "height": "20px" }} />
                 <div class="input-label" style={{ "font-size": "10px" }}>Time remaining: {submissionTimer()}s</div>
@@ -2391,7 +2388,7 @@ function SandBox() {
                 <Show when={isHost()} fallback={
                   <div style={{ "text-align": "center", "width": "100%", "margin": "2px 0" }}>
                     <span class="silly-spinner" style={{ "font-size": "14px" }}>...</span>
-                    <div class="input-label" style={{ "font-size": "9px" }}>Waiting for Boss Fool...</div>
+                    <div class="input-label" style={{ "font-size": "9px" }}>Waiting for Host...</div>
                   </div>
                 }>
                   <button class="silly-button silly-button-secondary" style={{ width: "100%", padding: "6px", "font-size": "13px" }} onClick={handleNextRound}>
@@ -2412,7 +2409,7 @@ function SandBox() {
           <div class="silly-panel" style={{ transform: "rotate(-1deg)", width: "440px", background: "#00e676" }}>
             <h1 class="lobby-title" style={{ "font-size": "30px", "text-shadow": "none" }}>Game Over</h1>
             <p class="lobby-subtitle" style={{ "color": "#000", "font-weight": "800", "margin-bottom": "12px" }}>
-              THE ULTIMATE FOOL HAS SURFACED!
+              absolute loser found
             </p>
 
             <div 
@@ -2455,7 +2452,7 @@ function SandBox() {
               <Show when={isHost()} fallback={
                 <div style={{ "text-align": "center", "width": "100%", "margin": "8px 0" }}>
                   <span class="silly-spinner">...</span>
-                  <div class="input-label">Waiting for Boss Fool to restart...</div>
+                  <div class="input-label">Waiting for Host to restart...</div>
                 </div>
               }>
                 <button class="silly-button silly-button-secondary" style={{ width: "100%" }} onClick={handlePlayAgain}>
