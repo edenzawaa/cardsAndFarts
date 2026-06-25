@@ -41,6 +41,28 @@ function SandBox() {
     ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`
     : 'wss://cardsandfarts-api.onrender.com/ws';
 
+  const [isFullscreen, setIsFullscreen] = createSignal(false);
+
+  const toggleFullscreen = () => {
+    const docEl = document.documentElement;
+    const request = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      if (request) {
+        request.call(docEl)
+          .then(() => setIsFullscreen(true))
+          .catch((err) => console.warn(err));
+      }
+    } else {
+      if (exit) {
+        exit.call(document)
+          .then(() => setIsFullscreen(false))
+          .catch((err) => console.warn(err));
+      }
+    }
+  };
+
   // Gesture tracking variables
   let touchStartCard = null;
   let alreadyHoveredBeforeTouch = false;
@@ -153,6 +175,19 @@ function SandBox() {
 
   // --- SESSION RECOVERY ON MOUNT ---
   onMount(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    document.addEventListener("msfullscreenchange", handleFullscreenChange);
+
+    onCleanup(() => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("msfullscreenchange", handleFullscreenChange);
+    });
+
     const savedLobbyId = sessionStorage.getItem('cards_and_farts_lobby_id');
     const savedPlayerId = sessionStorage.getItem('cards_and_farts_player_id');
     const savedPlayerName = sessionStorage.getItem('cards_and_farts_player_name');
@@ -1988,6 +2023,25 @@ function SandBox() {
       onTouchStart={() => handleLocalHover(null)}
       onClick={() => handleLocalHover(null)}
     >
+      {/* Fullscreen Floating Toggle Button */}
+      <button 
+        class="fullscreen-toggle-btn" 
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleFullscreen();
+        }}
+        title="Toggle Fullscreen"
+      >
+        <Show when={isFullscreen()} fallback={
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+          </svg>
+        }>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 14h6v6m10-6h-6v6M4 10h6V4m10 6h-6V4"/>
+          </svg>
+        </Show>
+      </button>
       {/* 3D WebGL Canvas (Always in DOM, visible only when game started) */}
       <div 
         ref={canvasContainer} 
@@ -2641,7 +2695,7 @@ function createPlayerAvatar(playerColor) {
   leftFoot.rotation.set(0.1, 0.2, 0); // Pointing slightly outward
   group.add(leftFoot);
 
-  const rightFoot = new THREE.Mesh(footGeo, footMat);
+  // const rightFoot = new THREE.Mesh(footGeo, footMat);
   rightFoot.position.set(0.07, -0.37, 0.05);
   rightFoot.rotation.set(0.1, -0.2, 0);
   group.add(rightFoot);

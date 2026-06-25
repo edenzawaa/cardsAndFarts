@@ -1,0 +1,16 @@
+{
+  "short_name": "cardsAndFarts",
+  "name": "cardsAndFarts",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0a0a0c",
+  "theme_color": "#ffca28",
+  "display": "standalone",
+  "orientation": "landscape"
+}
